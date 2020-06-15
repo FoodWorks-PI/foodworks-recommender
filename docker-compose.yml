@@ -20,7 +20,7 @@ services:
 #      -  recommender-data:/app/Data
 #      -  recommender-data:/app/Uploads
     ports:
-      - "5000:80"
+      - "80:80"
     depends_on:
       - db
 volumes:
