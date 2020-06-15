@@ -1,0 +1,6 @@
+﻿bin\
+obj\
+Uploads\
+Data\
+# TODO: Image needs to have initial model
+!Data\CourseRecommenderModel.zip
