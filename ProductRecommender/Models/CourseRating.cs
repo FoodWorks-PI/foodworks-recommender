@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.ML.Data;
 
-namespace ZertuRecommender.Models
+namespace ProductRecommender.Models
 {
     public class CourseRating
     {

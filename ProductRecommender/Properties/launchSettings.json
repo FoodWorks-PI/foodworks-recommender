@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ZertuRecommender": {
+    "ProductRecommender": {
       "commandName": "Project",
       "launchBrowser": false,
       "launchUrl": "weatherforecast",

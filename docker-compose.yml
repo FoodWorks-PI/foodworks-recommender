@@ -12,7 +12,7 @@ services:
       - "5432:5432"
   recommender:
     build:
-      context: ./ZertuRecommender
+      context: ./ProductRecommender
       dockerfile: Dockerfile
     environment:
       - "CONNECTION_STRING=Host=db;Database=recommender;Username=recommender;Password=recommender"

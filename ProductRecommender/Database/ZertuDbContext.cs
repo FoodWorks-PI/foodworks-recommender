@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ZertuRecommender.Models;
+using ProductRecommender.Models;
 
-namespace ZertuRecommender.Database
+namespace ProductRecommender.Database
 {
-    public class ZertuDbContext : DbContext
+    public class ProductDbContext : DbContext
     {
-        public ZertuDbContext(DbContextOptions<ZertuDbContext> options) : base(options)
+        public ProductDbContext(DbContextOptions<ProductDbContext> options) : base(options)
         {
         }
 

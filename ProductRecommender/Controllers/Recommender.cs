@@ -7,18 +7,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.ML;
 using Microsoft.ML;
-using ZertuRecommender.Database;
-using ZertuRecommender.Model;
-using ZertuRecommender.Models;
+using ProductRecommender.Database;
+using ProductRecommender.Model;
+using ProductRecommender.Models;
 
-namespace ZertuRecommender.Controllers
+namespace ProductRecommender.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class Recommender : ControllerBase
     {
         // private readonly PredictionEnginePool<CourseRatingMl, RatingPrediction> _predictionEnginePool;
-        private ZertuDbContext _dbContext;
+        private ProductDbContext _dbContext;
         private MLContext _mlContext;
         private ModelHolder _modelHolder;
 
@@ -29,7 +29,7 @@ namespace ZertuRecommender.Controllers
 
         public Recommender(
             // PredictionEnginePool<CourseRatingMl, RatingPrediction> predictionEnginePool,
-            ZertuDbContext dbContext, MLContext mlContext, ModelHolder modelHolder)
+            ProductDbContext dbContext, MLContext mlContext, ModelHolder modelHolder)
         {
             // _predictionEnginePool = predictionEnginePool;
             _dbContext = dbContext;

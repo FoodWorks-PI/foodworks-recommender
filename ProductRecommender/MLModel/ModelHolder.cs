@@ -1,6 +1,6 @@
 ﻿using Microsoft.ML;
 
-namespace ZertuRecommender.Model
+namespace ProductRecommender.Model
 {
     public class ModelHolder
     {

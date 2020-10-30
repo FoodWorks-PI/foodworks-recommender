@@ -14,4 +14,4 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
 COPY --from=build-env /app/out .
 COPY --from=build-env /app/Data ./Data
-ENTRYPOINT ["dotnet", "ZertuRecommender.dll"]
+ENTRYPOINT ["dotnet", "ProductRecommender.dll"]

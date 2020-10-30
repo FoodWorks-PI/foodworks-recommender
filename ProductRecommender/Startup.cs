@@ -18,11 +18,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ML;
 using Microsoft.ML;
-using ZertuRecommender.Database;
-using ZertuRecommender.Model;
-using ZertuRecommender.Models;
+using ProductRecommender.Database;
+using ProductRecommender.Model;
+using ProductRecommender.Models;
 
-namespace ZertuRecommender
+namespace ProductRecommender
 {
     public class Startup
     {
@@ -52,7 +52,7 @@ namespace ZertuRecommender
                 connectionString = Configuration.GetConnectionString("CONNECTION_STRING");
                 Environment.SetEnvironmentVariable("CONNECTION_STRING",connectionString);
             }
-            services.AddDbContext<ZertuDbContext>(options =>
+            services.AddDbContext<ProductDbContext>(options =>
                 // options.UseSqlite(connectionString)
                 options.UseNpgsql(connectionString)
                  );

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.ML.Data;
 
-namespace ZertuRecommender.Models
+namespace ProductRecommender.Models
 {
     public class UserView
     {

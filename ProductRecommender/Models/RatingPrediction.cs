@@ -1,4 +1,4 @@
-﻿namespace ZertuRecommender.Models
+﻿namespace ProductRecommender.Models
 {
     public class RatingPrediction
     {

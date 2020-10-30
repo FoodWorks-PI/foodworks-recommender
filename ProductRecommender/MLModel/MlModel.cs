@@ -12,10 +12,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
-using ZertuRecommender.Controllers;
-using ZertuRecommender.Models;
+using ProductRecommender.Controllers;
+using ProductRecommender.Models;
 
-namespace ZertuRecommender.Model
+namespace ProductRecommender.Model
 {
     public class MlModel
     {

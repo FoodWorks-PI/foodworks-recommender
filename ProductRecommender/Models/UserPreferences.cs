@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ZertuRecommender.Models
+namespace ProductRecommender.Models
 {
     
     public class UserPreferences

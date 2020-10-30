@@ -5,19 +5,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
-using ZertuRecommender.Database;
+using ProductRecommender.Database;
 
-namespace ZertuRecommender.Controllers
+namespace ProductRecommender.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class User : ControllerBase
     {
-        private ZertuDbContext _dbContext;
+        private ProductDbContext _dbContext;
 
         private string uploads;
 
-        public User(ZertuDbContext dbContext)
+        public User(ProductDbContext dbContext)
         {
             _dbContext = dbContext;
             uploads = Path.Combine(Environment.CurrentDirectory, "Uploads");
