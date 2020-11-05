@@ -66,7 +66,7 @@ namespace ProductRecommender.Controllers
                 return BadRequest();
             }
 
-            var procecedPreferences = userPreferences.Categories.Select(c => new CourseRating
+            var procecedPreferences = userPreferences.Categories.Select(c => new ProductRating
             {
                 UserId = userId,
                 CourseId = -(c + 2),
@@ -125,7 +125,7 @@ namespace ProductRecommender.Controllers
             var rating = (float) ((float) viewedCount / course.VideoCount * maxRating);
             if (courseRating == null)
             {
-                courseRating = new CourseRating
+                courseRating = new ProductRating
                 {
                     UserId = updateData.UserId,
                     CourseId = updateData.CourseId,
@@ -153,7 +153,7 @@ namespace ProductRecommender.Controllers
 
             List<Course> randCourses;
 
-            List<CourseWithRatingPrediction> finalReccomendations = new List<CourseWithRatingPrediction>();
+            List<ProductWithRatingPrediction> finalReccomendations = new List<ProductWithRatingPrediction>();
             for (int i = 0; i < maxAttempts; i++)
             {
                 // Get randombly unwathced courses
@@ -173,9 +173,9 @@ namespace ProductRecommender.Controllers
                     _mlContext.Model.CreatePredictionEngine<CourseRatingMl, RatingPrediction>(_modelHolder.Model);
                 
                 var recommendations = randCourses
-                    .Select(c => new CourseWithRatingPrediction()
+                    .Select(c => new ProductWithRatingPrediction()
                     {
-                        CourseId = c.CourseId,
+                        ProductId = c.CourseId,
                         RatingPrediction = engine.Predict(
                             example: new CourseRatingMl
                             {
@@ -193,7 +193,7 @@ namespace ProductRecommender.Controllers
                 {
                     return Ok(finalReccomendations
                         .OrderByDescending(c => c.RatingPrediction.Score)
-                        .Select(c => c.CourseId)
+                        .Select(c => c.ProductId)
                         .Take(requiredCourses)
                         .ToList());
                 }
@@ -201,8 +201,8 @@ namespace ProductRecommender.Controllers
 
             // Else return random from user preferences
             // Get preferences
-            var categories = await _dbContext.CourseRatings
-                .Where(c => c.UserId == userId && c.CourseId <= 0)
+            var categories = await _dbContext.ProductRatings
+                .Where(c => c.UserId == userId && c.ProductRatings <= 0)
                 // Hack: Category is - course for ghost courses
                 .Select(c => -c.CourseId).ToListAsync();
 
@@ -220,9 +220,9 @@ namespace ProductRecommender.Controllers
         }
     }
 
-    class CourseWithRatingPrediction
+    class ProductWithRatingPrediction
     {
-        public int CourseId { get; set; }
+        public int ProductId { get; set; }
         public RatingPrediction RatingPrediction { get; set; }
     }
 }

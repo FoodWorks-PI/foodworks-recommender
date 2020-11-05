@@ -64,7 +64,7 @@ namespace ProductRecommender
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
             // HACK
-            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "CourseRecommenderModel.zip");
+            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "ProductRecommenderModel.zip");
             services.AddTransient<MLContext>();
             
             var mlModel = new ModelHolder();

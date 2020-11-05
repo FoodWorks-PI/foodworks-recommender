@@ -2,11 +2,10 @@
 
 namespace ProductRecommender.Models
 {
-    public class Course
+    public class Product
     {
-        public int CourseId { get; set; }
+        public int ProductId { get; set; }
         public int CategoryId { get; set; }
-        public List<CourseRating> CourseRatings { get; set; }
-        public int VideoCount { get; set; }
+        public List<ProductRating> CourseRatings { get; set; }
     }
 }

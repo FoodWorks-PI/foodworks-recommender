@@ -6,7 +6,7 @@ using Microsoft.ML.Data;
 
 namespace ProductRecommender.Models
 {
-    public class CourseRating
+    public class ProductRating
     {
         [Key] public int RatingId { get; set; }
 
@@ -20,7 +20,7 @@ namespace ProductRecommender.Models
         // public bool IsPaid { get; set; }
     }
 
-    public class CourseRatingMl
+    public class ProductRatingMl
     {
         [ColumnName("rating_id")]
         public int RatingId { get; set; }
@@ -28,7 +28,7 @@ namespace ProductRecommender.Models
         [Column("user_id",TypeName = "TEXT")]
         public String UserId { get; set; }
 
-        [Column("course_id", TypeName = "INTEGER")]
+        [Column("product_id", TypeName = "INTEGER")]
         public int CourseId { get; set; }
 
         [Column("rating", TypeName = "REAL")]

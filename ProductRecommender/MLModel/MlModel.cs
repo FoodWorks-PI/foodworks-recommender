@@ -42,7 +42,7 @@ namespace ProductRecommender.Model
         public void MyTestLoad()
         {
             _mlContext = new MLContext();
-            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "CourseRecommenderModel.zip");
+            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "ProductRecommenderModel.zip");
             DataViewSchema modelSchema;
             ITransformer trainedModel = _mlContext.Model.Load(modelPath, out modelSchema);
             PredictAll(_mlContext, trainedModel);
@@ -99,12 +99,12 @@ namespace ProductRecommender.Model
             IEstimator<ITransformer> estimator = mlContext.Transforms.Conversion
                 .MapValueToKey(outputColumnName: "UserIdEncoded", inputColumnName: "UserId")
                 .Append(mlContext.Transforms.Conversion.MapValueToKey(
-                    outputColumnName: "CourseIdEncoded",
-                    inputColumnName: "CourseId"));
+                    outputColumnName: "ProductIdEncoded",
+                    inputColumnName: "ProductId"));
             var options = new MatrixFactorizationTrainer.Options
             {
                 MatrixColumnIndexColumnName = "UserIdEncoded",
-                MatrixRowIndexColumnName = "CourseIdEncoded",
+                MatrixRowIndexColumnName = "ProductIdEncoded",
                 LabelColumnName = "Rating",
                 NumberOfIterations = 20,
                 Lambda = 0.05f,
@@ -136,16 +136,16 @@ namespace ProductRecommender.Model
 
             var pedro = "34b357c6-4f3b-4eb6-af4e-e2a5367ad58e";
             var som = "74c5626f-d9fd-3e60-58f0-de76324067cc";
-            List<CourseWithRatingPrediction> tmp = new List<CourseWithRatingPrediction>();
+            List<ProductWithRatingPrediction> tmp = new List<ProductWithRatingPrediction>();
             for (int i = 0; i < 52; i++)
             {
                 var testInput = new CourseRatingMl() {UserId = pedro, CourseId = i};
                 var courseRatingPrediction = predictionEngine.Predict(testInput);
                 var label = Math.Round(courseRatingPrediction.Rating, 1);
                 var score = Math.Round(courseRatingPrediction.Score, 1);
-                tmp.Add(new CourseWithRatingPrediction
+                tmp.Add(new ProductWithRatingPrediction
                 {
-                    CourseId = i,
+                    ProductId = i,
                     RatingPrediction = new RatingPrediction
                     {
                         Rating = (float) label,
@@ -159,7 +159,7 @@ namespace ProductRecommender.Model
             foreach (var courseWithRatingPrediction in tmp)
             {
                 Console.WriteLine(
-                    $"{courseWithRatingPrediction.CourseId} -- {courseWithRatingPrediction.RatingPrediction.Rating} --- {courseWithRatingPrediction.RatingPrediction.Score}");
+                    $"{courseWithRatingPrediction.ProductId} -- {courseWithRatingPrediction.RatingPrediction.Rating} --- {courseWithRatingPrediction.RatingPrediction.Score}");
             }
 
             Console.WriteLine($"Done");
@@ -184,7 +184,7 @@ namespace ProductRecommender.Model
 
         public static void SaveModel(MLContext mlContext, DataViewSchema trainingDataViewSchema, ITransformer model)
         {
-            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "CourseRecommenderModel.zip");
+            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "ProductRecommenderModel.zip");
 
             Console.WriteLine("=============== Saving the model to a file ===============");
             mlContext.Model.Save(model, trainingDataViewSchema, modelPath);
@@ -194,7 +194,7 @@ namespace ProductRecommender.Model
         public static async Task SaveModelAsync(MLContext mlContext, DataViewSchema trainingDataViewSchema,
             ITransformer model)
         {
-            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "CourseRecommenderModel.zip");
+            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "ProductRecommenderModel.zip");
 
             Console.WriteLine("=============== Saving the model to a file ===============");
             mlContext.Model.Save(model, trainingDataViewSchema, modelPath);
