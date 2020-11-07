@@ -6,14 +6,18 @@ using Microsoft.ML.Data;
 
 namespace ProductRecommender.Models
 {
+    [Table("ratings")]
     public class ProductRating
     {
+        [Column("id")]
         [Key] public int RatingId { get; set; }
 
-        public String UserId { get; set; }
+        [Column("customer_ratings",TypeName = "INTEGER")]
+        public int UserId { get; set; }
 
-        public int CourseId { get; set; }
-        public Course Course { get; set; }
+        [Column("product_ratings", TypeName = "INTEGER")]
+        public int ProductId { get; set; }
+        public Product Product { get; set; }
 
         public float Rating { get; set; }
 
@@ -22,16 +26,16 @@ namespace ProductRecommender.Models
 
     public class ProductRatingMl
     {
-        [ColumnName("rating_id")]
+        [ColumnName("id")]
         public int RatingId { get; set; }
 
-        [Column("user_id",TypeName = "TEXT")]
-        public String UserId { get; set; }
+        [Column("customer_ratings",TypeName = "INTEGER")]
+        public int UserId { get; set; }
 
-        [Column("product_id", TypeName = "INTEGER")]
-        public int CourseId { get; set; }
+        [Column("product_ratings", TypeName = "INTEGER")]
+        public int ProductId { get; set; }
 
-        [Column("rating", TypeName = "REAL")]
+        [Column("rating", TypeName = "INTEGER")]
         public float Rating { get; set; }
 
         // public bool IsPaid { get; set; }

@@ -25,7 +25,7 @@ namespace ProductRecommender.Controllers
         double maxRating;
         int maxAttempts;
         int requiredCourses;
-        int coursesPerAttempt;
+        int productsPerAttempt;
 
         public Recommender(
             // PredictionEnginePool<CourseRatingMl, RatingPrediction> predictionEnginePool,
@@ -37,7 +37,7 @@ namespace ProductRecommender.Controllers
             _modelHolder = modelHolder;
             maxRating = 5.0;
             maxAttempts = 3;
-            coursesPerAttempt = 52;
+            productsPerAttempt = 52;
             requiredCourses = 5;
         }
 
@@ -57,134 +57,50 @@ namespace ProductRecommender.Controllers
             MlModel.SaveModel(_mlContext, trainingDataView.Schema, model);
         }
 
-
-        [HttpPost("preferences/{userId}")]
-        public async Task<ActionResult> SetPreferences(String userId, [FromBody] UserPreferences userPreferences)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var procecedPreferences = userPreferences.Categories.Select(c => new ProductRating
-            {
-                UserId = userId,
-                CourseId = -(c + 2),
-                Rating = (float) (maxRating * 0.75)
-            }).ToList();
-
-            foreach (var rating in procecedPreferences)
-            {
-                _dbContext.CourseRatings.Add(rating);
-            }
-
-            await _dbContext.SaveChangesAsync();
-
-            SaveModel();
-            return Ok();
-        }
-
-        [HttpPut]
-        public async Task<ActionResult<string>> UpdateRatings([FromBody] UserView updateData)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var viewed =
-                await _dbContext.UserViews
-                    .Where(c =>
-                        c.CourseId == updateData.CourseId && c.UserId == updateData.UserId)
-                    .ToListAsync();
-
-            bool contained = viewed.Any(c => c.VideoId == updateData.VideoId);
-            if (contained)
-            {
-                return Ok();
-            }
-
-            // get course
-            var course = await _dbContext.Courses.FirstOrDefaultAsync(c => c.CourseId == updateData.CourseId);
-
-            // Get Course Rating
-            var courseRating =
-                await _dbContext.CourseRatings
-                    .FirstOrDefaultAsync(c =>
-                        c.CourseId == updateData.CourseId && c.UserId == updateData.UserId);
-
-            // Increment Views 
-            var viewedCount = viewed.Count + 1;
-            _dbContext.UserViews.Add(new UserView
-            {
-                UserId = updateData.UserId,
-                CourseId = updateData.CourseId,
-                VideoId = updateData.VideoId
-            });
-            // Increment Rating 
-            var rating = (float) ((float) viewedCount / course.VideoCount * maxRating);
-            if (courseRating == null)
-            {
-                courseRating = new ProductRating
-                {
-                    UserId = updateData.UserId,
-                    CourseId = updateData.CourseId,
-                    Rating = rating
-                };
-            }
-            else
-            {
-                courseRating.Rating = rating;
-            }
-
-            _dbContext.CourseRatings.Update(courseRating);
-            await _dbContext.SaveChangesAsync();
-            SaveModel();
-            return Ok();
-        }
-
         [HttpGet("{userId}")]
-        public async Task<ActionResult<string>> Get(String userId)
+        public async Task<ActionResult<string>> Get(int userId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            List<Course> randCourses;
+            List<Product> randProducts;
 
             List<ProductWithRatingPrediction> finalReccomendations = new List<ProductWithRatingPrediction>();
             for (int i = 0; i < maxAttempts; i++)
             {
+                continue;
                 // Get randombly unwathced courses
 
-                var tmpCourses = await _dbContext.Courses
-                        .Include(c => c.CourseRatings)
-                        .Where(c => c.CourseRatings.All(r => r.UserId != userId) && c.CourseId >= 0)
+                var tmpProducts = await _dbContext.Products
+                        .Include(c => c.ProductRatings)
+                        .Where(c => c.ProductRatings.All(r => r.UserId != userId))
                         .ToListAsync()
                     ;
 
-                randCourses = tmpCourses
+                randProducts = tmpProducts
                     .OrderBy(c => Guid.NewGuid())
-                    .Take(coursesPerAttempt).ToList();
+                    .Take(productsPerAttempt).ToList();
 
                 // Run prediction on those
                 var engine =
-                    _mlContext.Model.CreatePredictionEngine<CourseRatingMl, RatingPrediction>(_modelHolder.Model);
+                    _mlContext.Model.CreatePredictionEngine<ProductRatingMl, RatingPrediction>(_modelHolder.Model);
                 
-                var recommendations = randCourses
+                var recommendations = randProducts
                     .Select(c => new ProductWithRatingPrediction()
                     {
-                        ProductId = c.CourseId,
+                        ProductId = c.Id,
                         RatingPrediction = engine.Predict(
-                            example: new CourseRatingMl
+                            example: new ProductRatingMl
                             {
                                 UserId = userId,
-                                CourseId = c.CourseId
+                                ProductId = c.Id
                             })
                     })
                     .Where(c => c.RatingPrediction.Score > maxRating * .5)
                     .ToList();
+                
                 engine.Dispose();
 
                 finalReccomendations.AddRange(recommendations);
@@ -199,24 +115,8 @@ namespace ProductRecommender.Controllers
                 }
             }
 
-            // Else return random from user preferences
-            // Get preferences
-            var categories = await _dbContext.ProductRatings
-                .Where(c => c.UserId == userId && c.ProductRatings <= 0)
-                // Hack: Category is - course for ghost courses
-                .Select(c => -c.CourseId).ToListAsync();
-
-            var randFromCat = await _dbContext.Courses
-                // Get courses with category prefered
-                .Where(c => categories.Any(cat => c.CategoryId == cat) && c.CourseId >= 0)
-                .Include(c => c.CourseRatings)
-                // Filter watched coursed
-                .Where(c => c.CourseRatings.All(r => r.UserId != userId))
-                .Select(c => c.CourseId)
-                .ToListAsync();
-            randFromCat = randFromCat.OrderBy(c => Guid.NewGuid()).Take(requiredCourses).ToList();
-
-            return Ok(randFromCat);
+            // Else return empty
+            return Ok(new List<Product>());
         }
     }
 

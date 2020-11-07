@@ -453,3 +453,4 @@ $RECYCLE.BIN/
 #ZertuRecommender/Data/CourseRecommenderModel.zip
 /postgres-data
 /recommender-data
+*.zip

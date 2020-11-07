@@ -45,8 +45,8 @@ namespace ProductRecommender
                    builder.AllowAnyOrigin();
                } ); 
             });
-            string connectionString = @"Data Source=Recommender.db";
-            connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            string modelHost = Configuration["MODEL_HOST"];
             if (connectionString == null)
             {
                 connectionString = Configuration.GetConnectionString("CONNECTION_STRING");

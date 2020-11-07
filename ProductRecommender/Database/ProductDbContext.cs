@@ -16,7 +16,6 @@ namespace ProductRecommender.Database
 
 
         public DbSet<Product> Products { get; set; }
-        public DbSet<ProductRating> ProductRatings { get; set; }
-        public DbSet<UserView> UserViews { get; set; }
+        public DbSet<ProductRating> Ratings { get; set; }
     }
 }

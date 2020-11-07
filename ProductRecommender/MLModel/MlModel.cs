@@ -73,10 +73,9 @@ namespace ProductRecommender.Model
 
         public static (IDataView training, IDataView test) LoadData(MLContext mlContext)
         {
-            DatabaseLoader loader = mlContext.Data.CreateDatabaseLoader<CourseRatingMl>();
-            string connectionString = @"Data Source=Recommender.db";
-            connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-            string sqlComand = "SELECT user_id AS UserId, course_id as CourseId, rating as Rating, rating_id FROM course_ratings";
+            DatabaseLoader loader = mlContext.Data.CreateDatabaseLoader<ProductRatingMl>();
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            string sqlComand = "SELECT customer_ratings AS UserId, product_ratings as ProductId, rating as Rating, id FROM ratings";
             // Npgsql.NpgsqlFactory.Instance
             DatabaseSource dbSource = new DatabaseSource(
                 // SQLiteFactory.Instance,
@@ -132,14 +131,14 @@ namespace ProductRecommender.Model
         public static void PredictAll(MLContext mlContext, ITransformer model)
         {
             Console.WriteLine("=============== Making a prediction ===============");
-            var predictionEngine = mlContext.Model.CreatePredictionEngine<CourseRatingMl, RatingPrediction>(model);
+            var predictionEngine = mlContext.Model.CreatePredictionEngine<ProductRatingMl, RatingPrediction>(model);
 
             var pedro = "34b357c6-4f3b-4eb6-af4e-e2a5367ad58e";
             var som = "74c5626f-d9fd-3e60-58f0-de76324067cc";
             List<ProductWithRatingPrediction> tmp = new List<ProductWithRatingPrediction>();
             for (int i = 0; i < 52; i++)
             {
-                var testInput = new CourseRatingMl() {UserId = pedro, CourseId = i};
+                var testInput = new ProductRatingMl() {UserId = 1,ProductId = i};
                 var courseRatingPrediction = predictionEngine.Predict(testInput);
                 var label = Math.Round(courseRatingPrediction.Rating, 1);
                 var score = Math.Round(courseRatingPrediction.Score, 1);
@@ -168,17 +167,17 @@ namespace ProductRecommender.Model
         public static void UseModelForSinglePrediction(MLContext mlContext, ITransformer model)
         {
             Console.WriteLine("=============== Making a prediction ===============");
-            var predictionEngine = mlContext.Model.CreatePredictionEngine<CourseRatingMl, RatingPrediction>(model);
-            var testInput = new CourseRatingMl() {UserId = "74c5626f-d9fd-3e60-58f0-de76324067cc", CourseId = 10};
+            var predictionEngine = mlContext.Model.CreatePredictionEngine<ProductRatingMl, RatingPrediction>(model);
+            var testInput = new ProductRatingMl() {UserId = 1, ProductId = 10};
 
             var courseRatingPrediction = predictionEngine.Predict(testInput);
             if (Math.Round(courseRatingPrediction.Score, 1) > 3.5)
             {
-                Console.WriteLine("Course " + testInput.CourseId + " is recommended for user " + testInput.UserId);
+                Console.WriteLine("Course " + testInput.ProductId + " is recommended for user " + testInput.UserId);
             }
             else
             {
-                Console.WriteLine("Course " + testInput.CourseId + " is not recommended for user " + testInput.UserId);
+                Console.WriteLine("Course " + testInput.ProductId + " is not recommended for user " + testInput.UserId);
             }
         }
 
