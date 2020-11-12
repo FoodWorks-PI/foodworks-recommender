@@ -64,21 +64,16 @@ namespace ProductRecommender
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
             // HACK
-            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "ProductRecommenderModel.zip");
-            services.AddTransient<MLContext>();
+            // var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "ProductRecommenderModel.zip");
+            // services.AddTransient<MLContext>();
             
             var mlModel = new ModelHolder();
             DataViewSchema modelSchema;
             var _mlContext = new MLContext();
-            ITransformer trainedModel = _mlContext.Model.Load(modelPath, out modelSchema);
+            (IDataView trainingDataView, IDataView testDataView) = MlModel.LoadData(_mlContext);
+            ITransformer trainedModel = MlModel.BuildAndTrainModel(_mlContext, trainingDataView);
             mlModel.Model = trainedModel;
             services.AddSingleton(mlModel);
-            
-            // services.AddPredictionEnginePool<CourseRatingMl, RatingPrediction>()
-            // .FromFile(
-            // modelName:"CourseRecommender",
-            // filePath: modelPath,
-            // watchForChanges: true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

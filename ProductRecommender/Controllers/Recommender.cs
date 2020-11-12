@@ -54,7 +54,6 @@ namespace ProductRecommender.Controllers
             (IDataView trainingDataView, IDataView testDataView) = MlModel.LoadData(_mlContext);
             ITransformer model = MlModel.BuildAndTrainModel(_mlContext, trainingDataView);
             _modelHolder.Model = model;
-            MlModel.SaveModel(_mlContext, trainingDataView.Schema, model);
         }
 
         [HttpGet("{userId}")]
@@ -70,7 +69,6 @@ namespace ProductRecommender.Controllers
             List<ProductWithRatingPrediction> finalReccomendations = new List<ProductWithRatingPrediction>();
             for (int i = 0; i < maxAttempts; i++)
             {
-                continue;
                 // Get randombly unwathced courses
 
                 var tmpProducts = await _dbContext.Products
