@@ -73,3 +73,5 @@ jobs:
           push: true
           tags: ${{ steps.prep.outputs.tags }}
           context: ./ProductRecommender
+          file: ./ProductRecommender/Dockerfile
+          
