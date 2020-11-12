@@ -36,7 +36,6 @@ jobs:
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          # DOCKER_IMAGE=foodworks/kratos-selfservice-ui-node
           DOCKER_IMAGE=$IMAGE_ID
           VERSION=noop
           if [[ $GITHUB_REF == refs/tags/* ]]; then
@@ -44,12 +43,15 @@ jobs:
           fi
           TAGS="${DOCKER_IMAGE}:${VERSION}"
           if [[ $VERSION =~ ^v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+            echo "Latest"
             MINOR=${VERSION%.*}
             MAJOR=${MINOR%.*}
             TAGS="$TAGS,${DOCKER_IMAGE}:${MINOR},${DOCKER_IMAGE}:${MAJOR},${DOCKER_IMAGE}:latest"
           elif [[ $VERSION == *alpha* ]]; then
+            echo "Alpha"
             TAGS="$TAGS,${DOCKER_IMAGE}:alpha"
           fi
+          echo ${TAGS}
           echo ::set-output name=docker_image::${DOCKER_IMAGE}
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
