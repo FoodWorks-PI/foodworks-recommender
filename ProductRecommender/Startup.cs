@@ -56,8 +56,8 @@ namespace ProductRecommender
             }
 
             int currentRetry = 0;
-            int retryCount = 10;
-            TimeSpan delay = TimeSpan.FromSeconds(5);
+            int retryCount = 50;
+            TimeSpan delay = TimeSpan.FromSeconds(10);
 
             while (currentRetry < retryCount)
             {
