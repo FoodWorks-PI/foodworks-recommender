@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -70,7 +71,7 @@ namespace ProductRecommender
                 {
                     Console.WriteLine("Here");
                     currentRetry++;
-                    Task.Delay(delay).ConfigureAwait(false).GetAwaiter();
+                    Thread.Sleep(delay);
                 }
             }
 
