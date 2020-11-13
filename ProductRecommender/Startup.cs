@@ -74,6 +74,7 @@ namespace ProductRecommender
             ITransformer trainedModel = MlModel.BuildAndTrainModel(_mlContext, trainingDataView);
             mlModel.Model = trainedModel;
             services.AddSingleton(mlModel);
+            services.AddTransient<MLContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
