@@ -18,6 +18,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ML;
 using Microsoft.ML;
+using Npgsql;
 using ProductRecommender.Database;
 using ProductRecommender.Model;
 using ProductRecommender.Models;
@@ -38,24 +39,45 @@ namespace ProductRecommender
         {
             services.AddCors(options =>
             {
-               options.AddDefaultPolicy(builder =>
-               {
-                   builder.AllowAnyHeader();
-                   builder.AllowAnyMethod();
-                   builder.AllowAnyOrigin();
-               } ); 
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyOrigin();
+                });
             });
             string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
             string modelHost = Configuration["MODEL_HOST"];
             if (connectionString == null)
             {
                 connectionString = Configuration.GetConnectionString("CONNECTION_STRING");
-                Environment.SetEnvironmentVariable("CONNECTION_STRING",connectionString);
+                Environment.SetEnvironmentVariable("CONNECTION_STRING", connectionString);
             }
+
+            int currentRetry = 0;
+            int retryCount = 10;
+            TimeSpan delay = TimeSpan.FromSeconds(5);
+
+            while (currentRetry < retryCount)
+            {
+                try
+                {
+                    using var conn = new NpgsqlConnection(connectionString);
+                    conn.Open();
+                    break;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Here");
+                    currentRetry++;
+                    Task.Delay(delay).ConfigureAwait(false).GetAwaiter();
+                }
+            }
+
             services.AddDbContext<ProductDbContext>(options =>
                 // options.UseSqlite(connectionString)
-                options.UseNpgsql(connectionString)
-                 );
+                options.UseNpgsql(connectionString, opt => { opt.EnableRetryOnFailure(6); })
+            );
             services.AddControllers(options =>
                 {
                     options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
@@ -66,7 +88,7 @@ namespace ProductRecommender
             // HACK
             // var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "ProductRecommenderModel.zip");
             // services.AddTransient<MLContext>();
-            
+
             var mlModel = new ModelHolder();
             DataViewSchema modelSchema;
             var _mlContext = new MLContext();
