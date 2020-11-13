@@ -55,25 +55,6 @@ namespace ProductRecommender
                 Environment.SetEnvironmentVariable("CONNECTION_STRING", connectionString);
             }
 
-            int currentRetry = 0;
-            int retryCount = 50;
-            TimeSpan delay = TimeSpan.FromSeconds(10);
-
-            while (currentRetry < retryCount)
-            {
-                try
-                {
-                    using var conn = new NpgsqlConnection(connectionString);
-                    conn.Open();
-                    break;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Here");
-                    currentRetry++;
-                    Thread.Sleep(delay);
-                }
-            }
 
             services.AddDbContext<ProductDbContext>(options =>
                 // options.UseSqlite(connectionString)
@@ -93,11 +74,30 @@ namespace ProductRecommender
             var mlModel = new ModelHolder();
             DataViewSchema modelSchema;
             var _mlContext = new MLContext();
-            (IDataView trainingDataView, IDataView testDataView) = MlModel.LoadData(_mlContext);
-            ITransformer trainedModel = MlModel.BuildAndTrainModel(_mlContext, trainingDataView);
-            mlModel.Model = trainedModel;
-            services.AddSingleton(mlModel);
-            services.AddTransient<MLContext>();
+            int currentRetry = 0;
+            int retryCount = 50;
+            TimeSpan delay = TimeSpan.FromSeconds(10);
+
+            while (currentRetry < retryCount)
+            {
+                try
+                {
+                    using var conn = new NpgsqlConnection(connectionString);
+                    conn.Open();
+                    (IDataView trainingDataView, IDataView testDataView) = MlModel.LoadData(_mlContext);
+                    ITransformer trainedModel = MlModel.BuildAndTrainModel(_mlContext, trainingDataView);
+                    mlModel.Model = trainedModel;
+                    services.AddSingleton(mlModel);
+                    services.AddTransient<MLContext>();
+                    break;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Here");
+                    currentRetry++;
+                    Thread.Sleep(delay);
+                }
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
